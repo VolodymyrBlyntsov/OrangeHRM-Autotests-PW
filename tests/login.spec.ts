@@ -1,4 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
+import { loginData } from '../data/login-data';
 
 const URL = 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login';
 
@@ -20,8 +21,8 @@ test.describe('Authorization to HRM', () => {
 
     const { username, password, loginButton } = loginPageElements(page);
 
-    await username.fill('Admin');
-    await password.fill('admin123');
+    await username.fill(loginData.username);
+    await password.fill(loginData.password);
     await loginButton.click();
 
     await expect(page).toHaveURL('https://opensource-demo.orangehrmlive.com/web/index.php/dashboard/index');
@@ -32,8 +33,8 @@ test.describe('Authorization to HRM', () => {
     const { username, password, loginButton } = loginPageElements(page);
     const errorMessageIncorrectLogin = page.locator('//p[text()="Invalid credentials"]');
 
-    await username.fill('admin');
-    await password.fill('password');
+    await username.fill(loginData.username);
+    await password.fill(loginData.incorrectPassword);
     await loginButton.click();
 
     await expect(errorMessageIncorrectLogin).toBeVisible();
@@ -44,7 +45,7 @@ test.describe('Authorization to HRM', () => {
    const { username, loginButton } = loginPageElements(page);
     const errorMessageForEmptyField = page.locator('//span[text()="Required"]');
 
-    await username.fill('Admin');
+    await username.fill(loginData.username);
     await loginButton.click();
 
     await expect(errorMessageForEmptyField).toBeVisible();
