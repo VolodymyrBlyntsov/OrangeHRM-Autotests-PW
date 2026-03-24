@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { loginPageURL, loginData, dashboardURL } from '../data/login-data';
+import { test } from '@playwright/test';
+import { loginData } from '../data/login-data';
 import { LoginPage } from '../pages/LoginPage';
 
 test.describe('Authorization to HRM', () => {
@@ -9,29 +9,21 @@ test.describe('Authorization to HRM', () => {
   test.beforeEach(async ({page}) => {
     login = new LoginPage(page);
     
-    await login.open(loginPageURL)
+    await login.open('/web/index.php/auth/login');
   });
 
-  test('C1: Login with correct credentials', async ({page}) => {
-    login = new LoginPage(page);
-
-    await login.fillAuthFields(loginData.username, loginData.password);
-    await expect(page).toHaveURL(dashboardURL);
+  test('C1: Login with correct credentials', async () => {
+    await login.form.login(loginData.username, loginData.password);
+    await login.form.checkSuccessfulLogin();
   });
 
-  test('C2: Login with incorrect credentials', async ({page}) => {
-    login = new LoginPage(page);
-
-    await login.fillAuthFieldsWithIncorrectData(loginData.username, loginData.incorrectPassword);
-    await expect(login.errorMessageIncorrectLogin).toBeVisible();
-    await expect(login.errorMessageIncorrectLogin).toContainText('Invalid credentials');
+  test('C2: Login with incorrect credentials', async () => {
+    await login.form.login(loginData.username, loginData.incorrectPassword);
+    await login.error.expectInvalidCredential();
   })
 
-  test('C3: Login with one empty field', async ({page}) => {
-    login = new LoginPage(page);
-
-    await login.fillAuthFieldsWithEmptyData(loginData.username);
-    await expect(login.errorMessageForEmptyField).toBeVisible();
-    await expect(login.errorMessageForEmptyField).toContainText('Required')
+  test('C3: Login with one empty field', async () => {
+    await login.form.login(loginData.username);
+    await login.error.expectEmptyCredential();
   })
 })
