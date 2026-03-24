@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { loginPageURL, loginData, dashboardURL } from '../data/login-data';
-import { LoginPage } from '../components/LoginPage';
+import { LoginPage } from '../pages/LoginPage';
 
 test.describe('Authorization to HRM', () => {
 
