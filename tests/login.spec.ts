@@ -1,53 +1,37 @@
-import { test, expect, Page } from '@playwright/test';
-import { loginData } from '../data/login-data';
-
-const URL = 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login';
-
-const loginPageElements = (page: Page) => {
-  return {
-    username: page.getByRole('textbox', { name: 'Username' }),
-    password: page.getByRole('textbox', { name: 'Password' }),
-    loginButton: page.getByRole('button', { name: 'Login' })
-  };
-}
+import { test, expect } from '@playwright/test';
+import { loginPageURL, loginData, dashboardURL } from '../data/login-data';
+import { LoginPage } from '../components/LoginPage';
 
 test.describe('Authorization to HRM', () => {
 
+  let login: LoginPage;
+
   test.beforeEach(async ({page}) => {
-    await page.goto(URL);
+    login = new LoginPage(page);
+    
+    await login.open(loginPageURL)
   });
 
   test('C1: Login with correct credentials', async ({page}) => {
+    login = new LoginPage(page);
 
-    const { username, password, loginButton } = loginPageElements(page);
-
-    await username.fill(loginData.username);
-    await password.fill(loginData.password);
-    await loginButton.click();
-
-    await expect(page).toHaveURL('https://opensource-demo.orangehrmlive.com/web/index.php/dashboard/index');
+    await login.fillAuthFields(loginData.username, loginData.password);
+    await expect(page).toHaveURL(dashboardURL);
   });
 
   test('C2: Login with incorrect credentials', async ({page}) => {
+    login = new LoginPage(page);
 
-    const { username, password, loginButton } = loginPageElements(page);
-    const errorMessageIncorrectLogin = page.locator('//p[text()="Invalid credentials"]');
-
-    await username.fill(loginData.username);
-    await password.fill(loginData.incorrectPassword);
-    await loginButton.click();
-
-    await expect(errorMessageIncorrectLogin).toBeVisible();
-    await expect(errorMessageIncorrectLogin).toContainText('Invalid credentials');
+    await login.fillAuthFieldsWithIncorrectData(loginData.username, loginData.incorrectPassword);
+    await expect(login.errorMessageIncorrectLogin).toBeVisible();
+    await expect(login.errorMessageIncorrectLogin).toContainText('Invalid credentials');
   })
 
   test('C3: Login with one empty field', async ({page}) => {
-   const { username, loginButton } = loginPageElements(page);
-    const errorMessageForEmptyField = page.locator('//span[text()="Required"]');
+    login = new LoginPage(page);
 
-    await username.fill(loginData.username);
-    await loginButton.click();
-
-    await expect(errorMessageForEmptyField).toBeVisible();
+    await login.fillAuthFieldsWithEmptyData(loginData.username);
+    await expect(login.errorMessageForEmptyField).toBeVisible();
+    await expect(login.errorMessageForEmptyField).toContainText('Required')
   })
 })
