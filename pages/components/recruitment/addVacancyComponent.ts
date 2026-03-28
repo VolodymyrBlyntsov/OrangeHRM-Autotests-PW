@@ -18,8 +18,6 @@ export class addVacancyComponent {
         this.description = page.getByRole('textbox', { name: 'Type description here' });
         this.hiringManager = page.getByRole('textbox', { name: 'Type for hints...' });
         this.numberOfPosition = page.locator('(//input[contains(@class, "oxd-input--active")])[3]');
-        this.status = page.locator('div.oxd-switch-wrapper input[type="checkbox"]').nth(1);
-        this.publishRSSFeed = page.locator('div.oxd-switch-wrapper input[type="checkbox"]').nth(2);
         this.saveVacancyButton = page.getByRole('button', { name: 'Save' })
     }
 
@@ -30,7 +28,7 @@ export class addVacancyComponent {
     async selectJobTitle(title: string): Promise<void> {
         await this.jobTitle.click();
         const expectedOptionJobTitle = title;
-        const expectedOptionJobTitleLocator = this.page.locator(`//div[contains(@role, "option") and contains(text(), "${expectedOptionJobTitle}")]`);
+        const expectedOptionJobTitleLocator = this.page.locator(`//div[@role="option" and .//span[contains(text(), "${title}")]]`);
         await expect(expectedOptionJobTitleLocator, "Selector with job titles visible").toBeVisible();
 
         await expectedOptionJobTitleLocator.click();
@@ -47,25 +45,11 @@ export class addVacancyComponent {
     
     async fillHiringManager(name: string): Promise<void> {
         await this.hiringManager.fill(name);
-        await this.hiringManager.press('ArrowDown')
-        await this.hiringManager.press('Enter');
-    }
+        await this.page.waitForTimeout(500);
 
-    async makeVacancyActive() {
-        const isChecked = await this.status.isChecked();
-
-        if(!isChecked) {
-            this.status.click();
-            await expect(this.status, "Checkbox vacancy status should be active").toBeChecked();
-        }
-    }
-
-    async disableRSSFeedLinks() {
-        const isChecked = await this.publishRSSFeed.isChecked();
-        if (isChecked) {
-            this.status.click();
-            await expect(this.publishRSSFeed, "Checkbox vacancy status should not be active").not.toBeChecked();
-        }
+        const expectedHiringManager = this.page.locator(`//div[@role="option" and .//span[contains(text(), "${name}")]]`);
+        await expect(expectedHiringManager, "Selector with hiring manager visible").toBeVisible({ timeout: 1000 });
+        await expectedHiringManager.click();
     }
 
     async submit() {
@@ -84,7 +68,5 @@ export class addVacancyComponent {
         await this.fillVacancyDescription(vacancyDesc);
         await this.fillNumberOfPosition(numOfPosition);
         await this.fillHiringManager(hiringManagerName);
-        await this.makeVacancyActive();
-        await this.disableRSSFeedLinks();
     }
 }
