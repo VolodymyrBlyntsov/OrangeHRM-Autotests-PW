@@ -25,7 +25,7 @@ export class loginFormComponent {
         await this.loginButton.click();
     }
 
-    async login(username: string, password?: string): Promise<void> {
+    async performLogin(username: string, password?: string): Promise<void> {
         await this.fillUsername(username);
         await this.fillPassword(password)
         await this.submit();
