@@ -10,6 +10,4 @@ export class RecruitmentPage extends BasePage {
         super(page);
         this.addVacancy = new addVacancyComponent(page);
     }
-
-    await this.page.open()
 }
