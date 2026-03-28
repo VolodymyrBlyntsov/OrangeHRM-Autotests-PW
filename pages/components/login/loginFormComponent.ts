@@ -6,8 +6,8 @@ export class loginFormComponent {
     protected readonly loginButton: Locator;
 
     constructor(private readonly page: Page) {
-        this.username = page.getByPlaceholder('Username');
-        this.password = page.getByPlaceholder('Password');
+        this.username = page.getByRole('textbox', { name: 'Username' });
+        this.password = page.getByRole('textbox', { name: 'Password' });
         this.loginButton = page.getByRole('button', { name: 'Login' });
     }
 
