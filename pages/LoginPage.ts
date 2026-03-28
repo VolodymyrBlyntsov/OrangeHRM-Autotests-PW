@@ -12,8 +12,4 @@ export class LoginPage extends BasePage {
         this.form = new loginFormComponent(page);
         this.error = new loginErrorHandleComponent(page);
     }
-
-    async open(path: string) {
-        await this.page.goto(path);
-    }
 }
