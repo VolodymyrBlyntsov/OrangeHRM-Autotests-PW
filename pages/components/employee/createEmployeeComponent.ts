@@ -53,6 +53,7 @@ export class createEmployeeComponent {
         await this.page.keyboard.press('Tab');
         await this.password.fill(password);
         await this.page.keyboard.press('Tab');
+        await this.page.keyboard.press('Tab');
         await this.confirmPassword.fill(password);
     }
 

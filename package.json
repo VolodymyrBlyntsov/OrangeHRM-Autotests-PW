@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test --project chromium",
+    "test:no-auth": "playwright test --project chromium-no-auth",
     "test:ui": "playwright test --headed --project chromium",
+    "test:ui:no-auth": "playwright test --headed --project chromium-no-auth",
     "test:debug": "playwright test --debug"
   },
   "keywords": [],
